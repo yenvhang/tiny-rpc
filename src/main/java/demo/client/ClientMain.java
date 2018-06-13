@@ -1,7 +1,8 @@
-import server.HelloServer;
+package demo.client;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
+import core.Client;
+import demo.server.HelloServer;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,7 +14,7 @@ public class ClientMain {
     public static void main(String[] args) {
 
         //获取代理对象
-        HelloServer helloServer =Client.getProxyObject(HelloServer.class,8090);
+        HelloServer helloServer = Client.getProxyObject(HelloServer.class,8090);
         for(int i=0;i<=100;i++){
             executorService.execute(new Runnable() {
                 @Override
@@ -22,7 +23,5 @@ public class ClientMain {
                 }
             });
         }
-
-
     }
 }

@@ -1,5 +1,8 @@
-import server.HelloServer;
-import server.HelloServerImpl;
+package demo.server;
+
+import core.ServerCenter;
+import demo.server.HelloServer;
+import demo.server.HelloServerImpl;
 
 import java.io.IOException;
 

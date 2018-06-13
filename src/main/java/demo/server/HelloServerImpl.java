@@ -1,4 +1,4 @@
-package server;
+package demo.server;
 
 /**
  * Created by yeyh on 2018/6/12.
