@@ -1,6 +1,7 @@
 package demo.client;
 
 import core.Client;
+import core.BIOClient;
 import demo.server.HelloServer;
 
 import java.util.concurrent.ExecutorService;
@@ -12,14 +13,15 @@ import java.util.concurrent.Executors;
 public class ClientMain {
     private static ExecutorService executorService = Executors.newFixedThreadPool(20);
     public static void main(String[] args) {
+        BIOClient bioClient =new BIOClient();
 
         //获取代理对象
-        HelloServer helloServer = Client.getProxyObject(HelloServer.class,8090);
-        for(int i=0;i<=100;i++){
+        HelloServer helloServer = Client.getProxyObject(HelloServer.class,bioClient);
+        for(int i=0;i<10;i++){
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    helloServer.sayHello( "proxy test threadId:"+ Thread.currentThread());
+                    System.out.println(helloServer.sayHello( "proxy test threadId:"+ Thread.currentThread()));
                 }
             });
         }

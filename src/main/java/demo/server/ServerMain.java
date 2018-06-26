@@ -1,5 +1,6 @@
 package demo.server;
 
+import core.NIOServer;
 import core.ServerCenter;
 import demo.server.HelloServer;
 import demo.server.HelloServerImpl;
@@ -11,8 +12,8 @@ import java.io.IOException;
  */
 public class ServerMain {
     public static void main(String[] args) throws ClassNotFoundException, IOException {
-        ServerCenter serverCenter =new ServerCenter(8090);
-        serverCenter.registry(HelloServer.class, HelloServerImpl.class);
-        serverCenter.start();
+        NIOServer nioServer =new NIOServer();
+        nioServer.registry(HelloServer.class,HelloServerImpl.class);
+        nioServer.start();
     }
 }

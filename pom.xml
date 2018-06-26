@@ -51,6 +51,13 @@
             <version>5.0.3.RELEASE</version>
         </dependency>
 
+        <!-->kryo 序列化<-->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.0.0-RC1</version>
+        </dependency>
+
 
 
 
