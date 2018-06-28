@@ -19,7 +19,7 @@ public interface Server {
     /**
      * ×¢²á·þÎñ
      * @param inf
-     * @param impl
+     * @param obj
      */
-    void registry(Class inf,Class impl) throws ClassNotFoundException;
+    void registry(Class inf,Object obj) throws ClassNotFoundException;
 }

@@ -12,11 +12,11 @@ import java.util.List;
  * Created by yeyh on 2018/6/27.
  */
 public class ServiceRegistry {
-    private Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
+
 
     private CountDownLatch countDownLatch =new CountDownLatch(1);
 
-    private static final String RPC_NODE_PATH="zk_for_rpc";
+    private static final String RPC_NODE_PATH="/zk_for_rpc";
 
    public void register(String data){
        if(data!=null){
@@ -30,7 +30,7 @@ public class ServiceRegistry {
     private ZooKeeper connect(){
         ZooKeeper zooKeeper = null;
         try {
-             zooKeeper =new ZooKeeper("121.196.216.17", 300, new Watcher() {
+             zooKeeper =new ZooKeeper("121.196.216.17:2181",5000 , new Watcher() {
                 @Override
                 public void process(WatchedEvent watchedEvent) {
                     if(Event.KeeperState.SyncConnected.equals(watchedEvent.getState())){

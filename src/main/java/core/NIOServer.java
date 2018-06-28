@@ -5,14 +5,30 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import core.domain.RPCRequest;
 import core.domain.RPCResponse;
+import core.domain.RPCServer;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.*;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import registry.ServiceRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,9 +37,10 @@ import java.util.Set;
 /**
  * Created by yeyh on 2018/6/25.
  */
-public class NIOServer implements Server {
-    private Map<String, Class> serversMap = new HashMap<>();
 
+public class NIOServer implements Server,ApplicationContextAware,InitializingBean {
+
+    private Map<String,Object> beansMap=new HashMap<>();
     public static byte[] grow(byte[] src, int size) {
         byte[] tmp = new byte[src.length + size];
         System.arraycopy(src, 0, tmp, 0, src.length);
@@ -37,117 +54,87 @@ public class NIOServer implements Server {
 
     @Override
     public void start() throws IOException {
-        Selector selector = Selector.open();
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.socket().bind(new InetSocketAddress(8080));
-        serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-        while (true) {
 
-            int readyChannels = selector.select();//返回的是Channel的个数
-            if (readyChannels == 0) {
-                continue;
+        EventLoopGroup group =new NioEventLoopGroup();
+        EventLoopGroup child =new NioEventLoopGroup();
+        try{
+            ServerBootstrap b =new ServerBootstrap();
+             b.group(group, child)
+                    .channel(NioServerSocketChannel.class)
+                    .localAddress(8080)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline()
+
+                                    .addLast(new RPCDecoder())
+                                    .addLast(new RPCEncoder())
+                                    .addLast(new RPCServerHandler(beansMap));
+                        }
+                    });
+            ChannelFuture f =b.bind().sync();
+            f.channel().closeFuture().sync();
+
+        }
+        catch (Exception e){
+
+        }
+        finally {
+            try {
+                group.shutdownGracefully().sync();
+                child.shutdownGracefully().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            Set<SelectionKey> set = selector.selectedKeys();
-            Iterator<SelectionKey> keyIterator = set.iterator();
-            while (keyIterator.hasNext()) {
-                SelectionKey key = keyIterator.next();
-                if (key.isAcceptable()) {
-                    System.out.println("服务器建立好连接");
 
-                    ServerSocketChannel tempSocketChannel = (ServerSocketChannel) key.channel();
-                    SocketChannel socketChannel = tempSocketChannel.accept();
-                    System.out.println("connect channel:" + tempSocketChannel);
-                    socketChannel.configureBlocking(false);
+        }
 
-                    socketChannel.register(selector, SelectionKey.OP_READ);
-                }
-                if (key.isReadable()) {
-                    int offset = 0;
-                    int read = 0;
-                    byte[] storage = new byte[1024];
-                    System.out.println("服务端开始读数据");
-                    RPCResponse rpcResponse = new RPCResponse();
-                    SocketChannel socketChannel = (SocketChannel) key.channel();
-                    System.out.println("read channel:" + socketChannel);
-                    socketChannel.configureBlocking(false);
-                    ByteBuffer buffer = ByteBuffer.allocate(1024);
-                    try {
 
-                        while ((read = socketChannel.read(buffer)) > 0) {
+    }
 
-                            //切换成读模式
-                            buffer.flip();
-                            if (read + offset > storage.length) {
-                                storage = grow(storage, storage.length * 2);
-                            }
+    @Override
+    public void registry(Class inf, Object object) throws ClassNotFoundException {
+        if (inf == null || object == null) {
+            throw new ClassNotFoundException("");
+        }
 
-                            System.arraycopy(buffer.array(), 0, storage, offset, read);
-                            offset += read;
-                            buffer.clear();
-                        }
-                        System.out.println(new String(storage));
-                        Kryo kryo = new Kryo();
-                        kryo.setRegistrationRequired(false);
-                        RPCRequest rpcRequest = kryo
-                                .readObject(new Input(storage), RPCRequest.class);
-                        Class clz = serversMap.get(rpcRequest.getClassName());
+        beansMap.put(inf.getName(),object);
+    }
 
-                        if (clz == null) {
-                            throw new ClassNotFoundException(clz + "not found");
-                        }
-
-                        Method method = clz.getMethod(rpcRequest.getMethodName(),
-                                rpcRequest.getParameterTypes());
-                        Object result = method
-                                .invoke(clz.newInstance(), rpcRequest.getParameters());
-                        if (result instanceof Throwable) {
-                            rpcResponse.setError((Throwable) result);
-                        } else {
-                            rpcResponse.setResult(result);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        rpcResponse.setError(e.getCause());
-                    }
-                    socketChannel
-                            .register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ,
-                                    rpcResponse);
-
-                }
-                if (key.isWritable()) {
-                    System.out.println("服务端写数据");
-                    SocketChannel writeChannle = (SocketChannel) key.channel();
-                    System.out.println("write channel:" + writeChannle);
-                    Kryo kryo = new Kryo();
-                    RPCResponse rpcResponse = (RPCResponse) key.attachment();
-                    if (rpcResponse != null) {
-                        kryo.setRegistrationRequired(false);
-                        Output output = new Output(new ByteArrayOutputStream());
-                        kryo.writeObject(output, rpcResponse);
-                        ByteBuffer byteBuffer = ByteBuffer.wrap(output.getBuffer());
-
-                        while (byteBuffer.hasRemaining()) {
-                            writeChannle.write(byteBuffer);
-                        }
-                    }
-                    key.cancel();
-
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Map<String, Object> serversMap =applicationContext.getBeansWithAnnotation(RPCServer.class);
+        if(serversMap!=null){
+            for(Map.Entry<String,Object> entry:serversMap.entrySet()){
+                Object object =entry.getValue();
+                if(object!=null){
+                    String interfaceName =object.getClass().getAnnotation(RPCServer.class).value().getName();
+                    beansMap.put(interfaceName,entry.getValue());
                 }
 
-                keyIterator.remove();
             }
         }
     }
 
     @Override
-    public void registry(Class inf, Class impl) throws ClassNotFoundException {
-        if (inf == null || impl == null) {
-            throw new ClassNotFoundException("");
-        }
+    public void afterPropertiesSet() throws Exception {
 
-        serversMap.put(inf.getName(), impl);
+        ServiceRegistry registry =new ServiceRegistry();
+        registry.register("172.21.3.32:8080");
+        //启动服务
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        //注册服务
+
+
     }
-
 }

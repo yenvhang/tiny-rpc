@@ -15,10 +15,21 @@ import java.net.Socket;
  */
 public class BIOClient {
 
+    private String host;
+    private int port;
+
+    public synchronized void updateSocketAdress(String date){
+        String [] dates =date.split(":");
+        host=dates[0];
+        port= Integer.parseInt(dates[1]);
+    }
+
     public Object send(RPCRequest rpcRequest) throws Throwable {
         //这里进行同步操作
         RPCResponse rpcResponse;
-        Socket socket = new Socket("172.21.3.32",8080);
+        System.out.println("begin connect");
+        Socket socket = new Socket(host,port);
+        System.out.println("connect success");
         Kryo kryo = new Kryo();
         kryo.setRegistrationRequired(false);
 
