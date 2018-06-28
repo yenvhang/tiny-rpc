@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by yeyh on 2018/6/12.
  */
-public class ServerCenter implements Server {
+public class ServerCenter implements Server,ApplicationContextAwar {
     private Logger             logger     = LoggerFactory.getLogger(getClass());
     private Map<String, Class> serversMap = new HashMap<>();
     private int port;
