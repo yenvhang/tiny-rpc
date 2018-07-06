@@ -5,5 +5,5 @@ package top.nvhang.rpc.registry;
  */
 public class Constant {
     static final String RPC_REGISTRY_PATH="/zk_for_rpc";
-    static final String RPC_NODE_PATH=RPC_REGISTRY_PATH+"/zk_for_rpc";
+    static final String RPC_NODE_PATH=RPC_REGISTRY_PATH+"/node";
 }

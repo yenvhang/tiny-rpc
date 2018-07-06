@@ -10,8 +10,12 @@ import top.nvhang.rpc.registry.strategy.LoadBalancingStrategy;
 import top.nvhang.rpc.registry.strategy.RandomStrategy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by yeyh on 2018/6/28.
@@ -42,10 +46,7 @@ public class ZKServiceDiscovery implements ServiceDiscovery {
         this.strategy = strategy;
     }
 
-    /**
-     * 服务地址仓库
-     */
-    private List<String> serviceAddressRepository;
+
     private CountDownLatch countDownLatch =new CountDownLatch(1);
 
 
@@ -85,7 +86,7 @@ public class ZKServiceDiscovery implements ServiceDiscovery {
                 },stat);
                 //todo 不应该clear 还会有并发问题 待优化
                 strategy.clear();
-                serviceAddressRepository.clear();
+
                 for(String node: nodes){
                     String url =new String(zooKeeper.getData(Constant.RPC_REGISTRY_PATH+"/"+node,null,stat));
                     strategy.addNode(url);
@@ -104,4 +105,21 @@ public class ZKServiceDiscovery implements ServiceDiscovery {
    public String getServiceUrl(){
         return strategy.getNode();
    }
+
+    public static void main(String[] args) {
+        Executor executor =Executors.newFixedThreadPool(5);
+        ZKServiceDiscovery zkServiceDiscovery =new ZKServiceDiscovery();
+        zkServiceDiscovery.setStrategy(ZKServiceDiscovery.CONSISTENT_HASH_STRATEGY);
+        zkServiceDiscovery.connect();
+        zkServiceDiscovery.discover();
+        for(int i=0;i<=100;i++){
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(zkServiceDiscovery.getServiceUrl());
+                }
+            });
+        }
+
+    }
 }
