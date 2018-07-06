@@ -9,4 +9,6 @@
 ### v2- nio,kryo的使用。
     在v1 的基础上，将服务端从BIO模式改成NIO。引入新的序列化框架 kryo
 
-  
+### v3- netty,zookeeper 的使用。
+    在v2 的基础上将NIO 替换成Netty。并引入 zookeeper 作为注册中心
+
