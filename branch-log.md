@@ -9,4 +9,13 @@
 ### v2- nio,kryo的使用。
     在v1 的基础上，将服务端从BIO模式改成NIO。引入新的序列化框架 kryo
 
-  
+### v3- netty,zookeeper 的使用。
+    在v2 的基础上将NIO 替换成Netty。并引入 zookeeper 作为注册中心
+
+### v4- 模块化。软负载
+    重构代码架构。分出各个模块
+    tiny-common 作为基础包。
+    tiny-clinet 作为客户端。
+    tiny-server 提供服务。
+    tiny-rigisty 提供服务的注册和发现。
+    tiny-demo 提供示例代码
