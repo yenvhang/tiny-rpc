@@ -6,11 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="tiny-rpc" />
+        <module name="tiny-client" />
+        <module name="tiny-common" />
+        <module name="tiny-demo" />
+        <module name="tiny-registry" />
+        <module name="tiny-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="tiny-client" target="1.8" />
+      <module name="tiny-common" target="1.8" />
+      <module name="tiny-demo" target="1.8" />
+      <module name="tiny-registry" target="1.8" />
       <module name="tiny-rpc" target="1.8" />
+      <module name="tiny-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

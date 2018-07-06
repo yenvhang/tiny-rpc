@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/tiny-client/tiny-client.iml" filepath="$PROJECT_DIR$/tiny-client/tiny-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tiny-common/tiny-common.iml" filepath="$PROJECT_DIR$/tiny-common/tiny-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tiny-demo/tiny-demo.iml" filepath="$PROJECT_DIR$/tiny-demo/tiny-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tiny-registry/tiny-registry.iml" filepath="$PROJECT_DIR$/tiny-registry/tiny-registry.iml" />
       <module fileurl="file://$PROJECT_DIR$/tiny-rpc.iml" filepath="$PROJECT_DIR$/tiny-rpc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tiny-server/tiny-server.iml" filepath="$PROJECT_DIR$/tiny-server/tiny-server.iml" />
     </modules>
   </component>
 </project>
