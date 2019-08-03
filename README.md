@@ -1,9 +1,9 @@
 # tiny-rpc
 > a tiny-rpc for learning socket,netty,jdk proxy,zookeeper etc...
-## ¹ØÓÚ
-tiny-rpc ÊÇÎªÁËÑ§Ï°rpc¿ò¼Ü¶ø¿ª·¢µÄ¡£Í¨¹ıÔÄ¶Á dubbo,grpc µÈÔ´Âë,Ò»²½²½¹¹½¨Ò»¸ö¼òÒ×°æµÄrpc¡£
-¿ª·¢¹ı³ÌÖĞÊ¹ÓÃµ½ÁË»ù´¡µÄsocket,jdk proxy,·´Éä,nioµÈapi¡£¶øºóÒı½øÁËnettyÌæ´úÁËsocket,Òı½ø kryo,hessian Ìæ»» java µÄĞòÁĞ»¯¡£ÒıÈë zk ×÷Îª·şÎñµÄ×¢²áÖĞĞÄ,²¢Ìá¹©Ò»ÖÂĞÔhash ×÷ÎªÈí¸ºÔØËã·¨,Spring ×÷ÎªÈİÆ÷¹ÜÀí¶ÔÏóµÄ´´½¨¡£  
-'tiny-rpc'ÊÇÖğ²½¹¹½¨µÄ£¬ÀúÊ·°æ±¾¼û[`branch-log.md`](https://github.com/yenvhang/tiny-rpc/blob/master/branch-log.md)¡£
+## å…³äº
+tiny-rpc æ˜¯ä¸ºäº†å­¦ä¹ rpcæ¡†æ¶è€Œå¼€å‘çš„ã€‚é€šè¿‡é˜…è¯» dubbo ç­‰æºç ,ä¸€æ­¥æ­¥æ„å»ºä¸€ä¸ªç®€æ˜“ç‰ˆçš„rpcã€‚
+å¼€å‘è¿‡ç¨‹ä¸­ä½¿ç”¨åˆ°äº†åŸºç¡€çš„socket,jdk proxy,åå°„,nioç­‰apiã€‚è€Œåå¼•è¿›äº†nettyæ›¿ä»£äº†socket,å¼•è¿› kryo,hessian æ›¿æ¢ java çš„åºåˆ—åŒ–ã€‚å¼•å…¥ zk ä½œä¸ºæœåŠ¡çš„æ³¨å†Œä¸­å¿ƒ,å¹¶æä¾›ä¸€è‡´æ€§hash ä½œä¸ºè½¯è´Ÿè½½ç®—æ³•,Spring ä½œä¸ºå®¹å™¨ç®¡ç†å¯¹è±¡çš„åˆ›å»ºã€‚  
+'tiny-rpc'æ˜¯é€æ­¥æ„å»ºçš„ï¼Œå†å²ç‰ˆæœ¬è§[`branch-log.md`](https://github.com/yenvhang/tiny-rpc/blob/master/branch-log.md)ã€‚
 
 
 
